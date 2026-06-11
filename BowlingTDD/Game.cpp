@@ -7,7 +7,7 @@ void Game::roll(int pins) noexcept {
 int Game::score() const noexcept {
     int total = 0;
     int roll_index = 0;
-    for (int frame = 0; frame < 10; ++frame) {
+    for (int frame = 0; frame < kTotalFrames; ++frame) {
         if (isStrike(roll_index)) {
             total += 10 + rolls_[roll_index + 1] + rolls_[roll_index + 2];
             roll_index += 1;
