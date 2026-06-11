@@ -67,3 +67,15 @@ TEST(BowlingGameTest, OneStrikeAddsNextTwoRollsAsBonus) {
     // Assert
     ASSERT_EQ(24, game.score());
 }
+
+TEST(BowlingGameTest, PerfectGameScoresThreeHundred) {
+    // Arrange
+    Game game;
+
+    // Act
+    for (int i = 0; i < 12; ++i)
+        game.roll(10);
+
+    // Assert
+    ASSERT_EQ(300, game.score());
+}
