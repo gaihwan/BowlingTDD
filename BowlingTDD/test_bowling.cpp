@@ -40,3 +40,16 @@ TEST(BowlingGameTest, AllOnesScoresTwenty) {
     // Assert
     ASSERT_EQ(20, game.score());
 }
+
+TEST(BowlingGameTest, OneSpareAddsNextRollAsBonus) {
+    // Arrange
+    Game game;
+
+    // Act
+    rollSpare(game);           // roll(5), roll(5)
+    game.roll(3);
+    rollMany(game, 17, 0);    // 나머지 0
+
+    // Assert
+    ASSERT_EQ(16, game.score());
+}
