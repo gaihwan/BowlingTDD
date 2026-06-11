@@ -2,10 +2,11 @@
 
 class Game {
 public:
-    void roll(int pins);
-    int  score() const;
+    void roll(int pins) noexcept;
+    int  score() const noexcept;
 private:
-    bool isSpare(int roll_index) const;
+    bool isStrike(int roll_index) const noexcept;
+    bool isSpare(int roll_index) const noexcept;
     int rolls_[21]{};
     int current_roll_ = 0;
 };
