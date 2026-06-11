@@ -35,7 +35,7 @@ Visual Studio 2022 + GMock(gtest) 환경에서 볼링 점수 계산기를 TDD로
 
 ## TDD 진행 방식
 
-> **스킬:** 기능 개발 또는 버그 수정 전 반드시 [`.claude/skills/SKILL.md`](.claude/skills/SKILL.md) (`test-driven-development`) 를 참고한다.
+> **스킬:** 기능 개발 또는 버그 수정 전 반드시 [`.claude/skills/test-driven-development/SKILL.md`](.claude/skills/test-driven-development/SKILL.md) (`test-driven-development`) 를 참고한다.
 
 Red → Green → Refactor 사이클을 커밋 단위로 구분한다.
 
