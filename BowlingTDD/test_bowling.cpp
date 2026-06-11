@@ -53,3 +53,17 @@ TEST(BowlingGameTest, OneSpareAddsNextRollAsBonus) {
     // Assert
     ASSERT_EQ(16, game.score());
 }
+
+TEST(BowlingGameTest, OneStrikeAddsNextTwoRollsAsBonus) {
+    // Arrange
+    Game game;
+
+    // Act
+    rollStrike(game);          // roll(10)
+    game.roll(3);
+    game.roll(4);
+    rollMany(game, 16, 0);     // 나머지 0 (10프레임까지)
+
+    // Assert
+    ASSERT_EQ(24, game.score());
+}
