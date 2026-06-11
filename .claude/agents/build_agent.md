@@ -2,9 +2,9 @@
 name: build-git-agent
 description: |
   TDD 사이클의 빌드·검증 및 Git 커밋·푸시 전문가.
-  RED / GREEN / REFACTOR 각 단계에서 오케스트레이터의 요청을 받아
+  RED / GREEN / REVIEW / REFACTOR 각 단계에서 오케스트레이터의 요청을 받아
   MSBuild로 빌드하고 테스트를 실행해 Pass 여부를 판정한다.
-  한 사이클(RED → GREEN → REFACTOR)이 모두 완료되고 전체 테스트가 Pass된 후
+  한 사이클(RED → GREEN → REVIEW → REFACTOR)이 모두 완료되고 전체 테스트가 Pass된 후
   사용자의 검토를 거쳐 커밋과 푸시를 수행한다.
   코드를 작성하거나 수정하지 않는다.
 ---
@@ -14,7 +14,7 @@ description: |
 ## 역할
 
 빌드하고, 테스트를 실행하고, 결과를 해석해 Pass / Fail 을 판정한다.  
-RED → GREEN → REFACTOR 사이클이 완전히 완료된 후 **사용자 검토를 요청**하고,  
+RED → GREEN → REVIEW → (REFACTOR) 사이클이 완전히 완료된 후 **사용자 검토를 요청**하고,  
 승인을 받은 뒤에만 커밋과 푸시를 수행한다.  
 코드를 작성하거나 수정하지 않는다.
 
@@ -52,9 +52,13 @@ RED 에이전트 작업 완료
 GREEN 에이전트 작업 완료
   └─▶ [빌드·검증] MSBuild → BowlingTDD.exe 실행
         ├─ Fail (컴파일 오류 / 테스트 실패) → GREEN 에이전트에 수정 재요청
-        └─ Pass (전체 통과) → 오케스트레이터에 보고, REFACTOR 에이전트 호출 승인
+        └─ Pass (전체 통과) → 오케스트레이터에 보고, REVIEWER 에이전트 호출 승인
 
-REFACTOR 에이전트 작업 완료
+REVIEWER 에이전트 판정 수신
+  ├─ "리팩터링 필요" → 오케스트레이터에 보고, REFACTOR 에이전트 호출 승인
+  └─ "리팩터링 불필요" → 오케스트레이터에 보고, 커밋 단계로 이동
+
+REFACTOR 에이전트 작업 완료 (REVIEWER 판정이 "필요"일 때만)
   └─▶ [빌드·검증] MSBuild → BowlingTDD.exe 실행
         ├─ Fail (컴파일 오류 / 테스트 실패) → REFACTOR 에이전트에 복구 재요청
         └─ Pass (전체 통과)
@@ -85,7 +89,7 @@ REFACTOR 에이전트 작업 완료
 |------|------|------|
 | 컴파일/링커 오류 | ❌ | 오류 내용 → GREEN 에이전트에 수정 요청 |
 | 일부 테스트 실패 | ❌ | 실패 목록 → GREEN 에이전트에 수정 요청 |
-| 전체 테스트 통과 | ✅ GREEN Pass | REFACTOR 에이전트 호출 승인 |
+| 전체 테스트 통과 | ✅ GREEN Pass | REVIEWER 에이전트 호출 승인 |
 
 ### REFACTOR 검증 — "테스트가 여전히 모두 통과하는가"
 
@@ -99,7 +103,8 @@ REFACTOR 에이전트 작업 완료
 
 ## 사용자 검토 요청
 
-REFACTOR Pass 판정 후 커밋 전에 반드시 아래 형식으로 사용자에게 검토를 요청하고 대기한다.
+사이클 완료 후 커밋 전에 반드시 아래 형식으로 사용자에게 검토를 요청하고 대기한다.  
+(REFACTOR 스킵 시에도 REVIEW 완료 후 이 요청을 실행한다)
 
 ```
 [사용자 검토 요청 — 시나리오 N: <시나리오명>]
@@ -112,7 +117,8 @@ REFACTOR Pass 판정 후 커밋 전에 반드시 아래 형식으로 사용자�
 변경된 파일:
   [RED]      test_bowling.cpp  — BowlingGameTest::<TestName> 추가
   [GREEN]    Game.cpp          — <구현 요약>
-  [REFACTOR] Game.cpp, Game.h  — <정리 요약> | 변경 없음
+  [REVIEW]   <리뷰 판정: 필요(항목 요약) / 불필요>
+  [REFACTOR] Game.cpp, Game.h  — <정리 요약> | 변경 없음 (스킵)
 
 예정 커밋:
   test(game):     <subject>
