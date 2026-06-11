@@ -29,3 +29,14 @@ TEST(BowlingGameTest, GutterGameScoresZero) {
     // Assert
     ASSERT_EQ(0, game.score());
 }
+
+TEST(BowlingGameTest, AllOnesScoresTwenty) {
+    // Arrange
+    Game game;
+
+    // Act
+    rollMany(game, 20, 1);
+
+    // Assert
+    ASSERT_EQ(20, game.score());
+}
